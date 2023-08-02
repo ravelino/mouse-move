@@ -6,43 +6,56 @@ import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class MouseMove {
     
-    private static final int MOUSE_MOVE_TIME = 15000;
-
-    public static void main(String[] args) {
-        try {
-            layout();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private static final int SECONDS_MOUSE_MOVE = 60;
+    
+    private JLabel jLabel = new JLabel();
+    private JLabel jLabelDate = new JLabel();
+    
+    public void run() {
+        layout();
     }
     
     
-    private static void layout() {
-        var frame = new JFrame("Mouse Mover");
+    
+    
+    private void layout() {
+        var frame = new JFrame("Mouse Move");
+        frame.pack();
+        frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         var firstPanel = new JPanel();
         firstPanel.setLayout(null);
-        firstPanel.add(getButtonStart());
         
+        
+        jLabel.setBounds(15, 40, 260, 30);
+        jLabelDate.setBounds(76, 60, 260, 30);
+        jLabel.setBackground(Color.BLUE);
+
+        firstPanel.add(jLabel);
+        firstPanel.add(jLabelDate);
+        firstPanel.add(getButtonStart());
         frame.add(firstPanel);
-        frame.setSize(150, 100);
+        frame.setSize(280, 140);
         frame.setVisible(true);
     }
     
-    private static JButton getButtonStart() {
+    private JButton getButtonStart() {
         
         var button = new JButton("Start");
         button.setLayout(null);
-        button.setBounds(10, 10, 120, 30);
+        button.setBounds(72, 10, 120, 30);
         button.setForeground(Color.WHITE);
         button.setBackground(Color.BLUE);
         button.setFocusPainted(false);
@@ -74,11 +87,11 @@ public class MouseMove {
         return button;
     }
     
-    private static Runnable getRunnable() {
+    private Runnable getRunnable() {
         return () -> { 
             try {
                 while (true) {
-                    TimeUnit.MILLISECONDS.sleep(MOUSE_MOVE_TIME);
+                    TimeUnit.SECONDS.sleep(SECONDS_MOUSE_MOVE);
                     mouseMove();
                 }
             } catch (Exception e) {
@@ -87,7 +100,7 @@ public class MouseMove {
         };
     }
     
-    private static void mouseMove() throws AWTException {
+    private void mouseMove() throws AWTException {
         var size = Toolkit.getDefaultToolkit().getScreenSize();
         var width = (int) size.getWidth();
         var height = (int) size.getHeight();
@@ -97,6 +110,8 @@ public class MouseMove {
 
         var robot = new Robot();
         System.out.println("Movendo mouse X: " + randX + ", Y:" + randY);
+        jLabel.setText("Ultima posição EixoX = " + randX + ", EixoY = " + randY);
+        jLabelDate.setText(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")   ));
         robot.mouseMove(randX, randY);
     }
 
